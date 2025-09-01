@@ -7,7 +7,9 @@
  * @returns {Array<{x: number, y: number}>} - Un tableau contenant un objet représentant la position du premier segment du serpent.
  */
 function initSnake() {
-  // A compléter
+  const startX = 5 * 20; // position de départ en X (5 cases * taille d'une case = 100px)
+  const startY = 5 * 20; // position de départ en Y (5 cases * taille d'une case = 100px)
+  return [{ x: startX, y: startY }];
 }
 
 /**
@@ -23,7 +25,20 @@ function initSnake() {
  * @returns {{x: number, y: number}} - Un objet représentant les nouvelles coordonnées `x` et `y` de la tête du serpent après le déplacement.
  */
 function moveSnake() {
-  // A compléter
+
+  //copie de la têt
+  const head = { ...snake[0] }; 
+
+  //direction
+  if (direction === "LEFT") head.x -= box;
+  if (direction === "UP") head.y -= box;
+  if (direction === "RIGHT") head.x += box;
+  if (direction === "DOWN") head.y += box;
+
+  snake.unshift(head);
+  
+  return head;
+
 }
 
 /**
