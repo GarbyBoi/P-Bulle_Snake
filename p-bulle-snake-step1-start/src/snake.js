@@ -7,9 +7,19 @@
  * @returns {Array<{x: number, y: number}>} - Un tableau contenant un objet représentant la position du premier segment du serpent.
  */
 export function initSnake() {
-  const startX = 5 * 20; // position de départ en X (5 cases * taille d'une case = 100px)
-  const startY = 5 * 20; // position de départ en Y (5 cases * taille d'une case = 100px)
-  return [{ x: startX, y: startY }];
+  const box = 20; //longueure d'une case
+  const startX = 5 * box; // position de départ en X (5 cases * taille d'une case = 100px)
+  const startY = 5 * box; // position de départ en Y (5 cases * taille d'une case = 100px)
+  
+
+  // serpent avec 3 segments : tête + 2 segments de queue
+  const snake = [
+    { x: startX, y: startY },          // tête
+    { x: startX - box, y: startY },    // segment 1
+    { x: startX - 2 * box, y: startY } // segment 2
+  ];
+
+   return snake;
 }
 
 /**
@@ -55,8 +65,12 @@ export function moveSnake(snake, direction, box) {
  */
 export function drawSnake(ctx, snake, box) {
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = "green"; //vert
-    ctx.fillRect(snake[i].x, snake[i].y, box, box); // dessine un carré
+    if (i === 0) {
+      ctx.fillStyle = "green"; // tête plus foncée
+    } else {
+      ctx.fillStyle = "lightgreen"; // queue plus clair
+    }
+    ctx.fillRect(snake[i].x, snake[i].y, box, box);
   }
 }
 

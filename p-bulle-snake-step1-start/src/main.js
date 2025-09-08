@@ -29,6 +29,7 @@ function startGame() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const head = moveSnake(snake, direction, box);
+  snake.pop();
   drawSnake(ctx, snake, box);
 }
 
