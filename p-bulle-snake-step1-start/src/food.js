@@ -9,8 +9,20 @@
  * @param {HTMLCanvasElement} canvas - L'élément canvas représentant la surface de jeu.
  * @returns {{x: number, y: number}} - Un objet contenant les coordonnées `x` et `y` de la nourriture générée.
  */
-export function generateFood() {
-  // A compléter
+export function generateFood(box, canvas) {
+  // obtenir le nombre de colone et lignes en fonctions de la taille du canevas (ici 20x20 et 400x400) mais peut être variable
+  const cols = Math.floor(canvas.width / box);
+  const rows = Math.floor(canvas.height / box);
+  
+  //choisir une ligne et une colonne aléatoirement
+  const randomCol = Math.floor(Math.random() * cols);
+  const randomRow = Math.floor(Math.random() * rows);
+
+  //retourne les coordonées
+  return {
+    x: randomCol * box,
+    y: randomRow * box,
+  };
 }
 
 /**
@@ -24,6 +36,7 @@ export function generateFood() {
  * @param {{x: number, y: number}} food - Un objet contenant les coordonnées `x` et `y` où la nourriture doit être dessinée.
  * @param {number} box - La taille d'une case de la grille en pixels, utilisée pour déterminer la taille de la nourriture.
  */
-export function drawFood() {
-  // A compléter
+export function drawFood(ctx, food, box) {
+  ctx.fillStyle = "red"; // food color
+  ctx.fillRect(food.x, food.y, box, box);
 }

@@ -31,6 +31,7 @@ function draw() {
   const head = moveSnake(snake, direction, box);
   snake.pop();
   drawSnake(ctx, snake, box);
+  drawFood(ctx, food, box)
 }
 
 startGame();
