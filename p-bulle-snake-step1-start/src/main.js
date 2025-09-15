@@ -36,8 +36,16 @@ function draw() {
     food = generateFood(box, canvas);
   } 
   else {
-    snake.pop(); //bouge normalement
+    snake.pop();
   }
+
+  //arrête la partie en cas de collision vaec le corps
+  if (checkCollision(head, snake)) {
+    clearInterval(gameInterval); //interomp la partie
+    alert("Game Over! Your score: " + score);
+    return; //interomp draw()
+  }
+
   drawSnake(ctx, snake, box);
   drawFood(ctx, food, box)
 }
