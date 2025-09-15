@@ -29,7 +29,15 @@ function startGame() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const head = moveSnake(snake, direction, box);
-  snake.pop();
+
+  //si la tête et la nouritures partage les mêmes cordonnées, +1 de score et nouvelle pomme, pas de pop le snake grandi
+  if (head.x === food.x && head.y === food.y) {
+    score++; 
+    food = generateFood(box, canvas);
+  } 
+  else {
+    snake.pop(); //bouge normalement
+  }
   drawSnake(ctx, snake, box);
   drawFood(ctx, food, box)
 }
