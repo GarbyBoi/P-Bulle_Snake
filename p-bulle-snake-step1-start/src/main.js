@@ -58,7 +58,8 @@ function draw() {
   }
 
   drawSnake(ctx, snake, box);
-  drawFood(ctx, food, box)
+  drawFood(ctx, food, box);
+  drawScore(ctx, score);
 }
 
 startGame();
