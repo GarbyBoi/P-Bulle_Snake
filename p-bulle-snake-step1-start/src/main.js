@@ -49,13 +49,31 @@ function draw() {
   else {
     snake.pop();
   }
+if (checkCollision(head, snake) || checkWallCollision(head, canvas, box)) {
+  clearInterval(gameInterval); // interrompt la partie
 
-  //arrête la partie en cas de collision vaec le corps ou le mur (si true ou true)
-  if (checkCollision(head, snake) || checkWallCollision(head, canvas, box)) {
-    clearInterval(gameInterval); // interrompt la partie
-    alert("Game Over! Your score: " + score);
-    return; // interrompt draw()
-  }
+  // Efface
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Texte principal : "Game Over !"
+  ctx.fillStyle = "black";
+  ctx.font = "36px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Game Over !", canvas.width / 2, canvas.height / 2 - 35);
+
+  // Text "ton score"
+  ctx.font = "24px Arial, sans-serif";
+  ctx.fillText(`Ton score : ${score}`, canvas.width / 2, canvas.height / 2 + 5);
+
+  // liste des scores
+  ctx.font = "18px Arial, sans-serif";
+  ctx.fillText("Meilleurs scores :", canvas.width / 2, canvas.height / 2 + 40);
+
+  return; // interrompt draw()
+}
 
   drawSnake(ctx, snake, box);
   drawFood(ctx, food, box);
