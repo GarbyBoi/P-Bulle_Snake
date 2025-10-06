@@ -50,11 +50,11 @@ function draw() {
     snake.pop();
   }
 
-  //arrête la partie en cas de collision vaec le corps
-  if (checkCollision(head, snake)) {
-    clearInterval(gameInterval); //interomp la partie
+  //arrête la partie en cas de collision vaec le corps ou le mur (si true ou true)
+  if (checkCollision(head, snake) || checkWallCollision(head, canvas, box)) {
+    clearInterval(gameInterval); // interrompt la partie
     alert("Game Over! Your score: " + score);
-    return; //interomp draw()
+    return; // interrompt draw()
   }
 
   drawSnake(ctx, snake, box);
