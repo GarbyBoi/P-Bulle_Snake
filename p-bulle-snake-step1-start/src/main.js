@@ -1,6 +1,6 @@
 import { initSnake, moveSnake, drawSnake } from "./snake.js";
 import { generateFood, drawFood } from "./food.js";
-import { handleDirectionChange } from "./controls.js";
+import { handleDirectionInput, getNextDirection } from "./controls.js";
 import { checkCollision, checkWallCollision } from "./collision.js";
 import { drawScore } from "./score.js";
 
@@ -9,75 +9,88 @@ const ctx = canvas.getContext("2d");
 
 const box = 20;
 const gameSpeed = 170;
-const directionQueue = [];//gère 2 moves en même temps dans le même intervale
-
 let snake;
 let food;
 let direction = "RIGHT";
 let score = 0;
-let gameInterval; // Variable pour stocker l'identifiant de l'intervalles
+let gameInterval;
 
-document.addEventListener("keydown", (event) => {
-  const lastDirection = directionQueue.length > 0 ? directionQueue[directionQueue.length - 1] : direction;
-  const newDirection = handleDirectionChange(event, lastDirection);
-  //gère les double mouvements dans le même intervale
-  if (newDirection !== lastDirection) {
-    directionQueue.push(newDirection);
-  }
-});
-
+/**
+ * Initialise et démarre une nouvelle partie
+ */
 function startGame() {
   snake = initSnake();
   food = generateFood(box, canvas);
+  score = 0;
+  direction = "RIGHT";
 
-  gameInterval = setInterval(draw, gameSpeed); // Stockage de l'identifiant de l'intervalle
+  gameInterval = setInterval(draw, gameSpeed);
 }
 
+/**
+ * Dessine et met à jour le jeu : mouvement du serpent, nourriture, collisions, rendu
+ */
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (directionQueue.length > 0) {
-  direction = directionQueue.shift();//gère les mouvements dans l'ordre
-}
+  // Mise à jour de la direction via la queue
+  direction = getNextDirection(direction);
+
+  // Déplacement du serpent
   const head = moveSnake(snake, direction, box);
 
-  //si la tête et la nouritures partage les mêmes cordonnées, +1 de score et nouvelle pomme, pas de pop le snake grandi
+  // Gestion de la nourriture
   if (head.x === food.x && head.y === food.y) {
-    score++; 
+    score++;
     food = generateFood(box, canvas);
-  } 
-  else {
+  } else {
     snake.pop();
   }
-if (checkCollision(head, snake) || checkWallCollision(head, canvas, box)) {
-  clearInterval(gameInterval); // interrompt la partie
 
-  // Efface
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Gestion des collisions
+  if (checkCollision(head, snake) || checkWallCollision(head, canvas, box)) {
+    endGame();
+    return; // stoppe draw() ici
+  }
 
-  // Texte principal : "Game Over !"
-  ctx.fillStyle = "black";
-  ctx.font = "36px Arial, sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("Game Over !", canvas.width / 2, canvas.height / 2 - 35);
-
-  // Text "ton score"
-  ctx.font = "24px Arial, sans-serif";
-  ctx.fillText(`Ton score : ${score}`, canvas.width / 2, canvas.height / 2 + 5);
-
-  // liste des scores
-  ctx.font = "18px Arial, sans-serif";
-  ctx.fillText("Meilleurs scores :", canvas.width / 2, canvas.height / 2 + 40);
-
-  return; // interrompt draw()
-}
-
+  // Dessin
   drawSnake(ctx, snake, box);
   drawFood(ctx, food, box);
   drawScore(ctx, score);
 }
 
+/**
+ * Affiche l'écran de fin de partie et arrête la boucle
+ */
+function endGame() {
+  clearInterval(gameInterval);
+
+  // Fond blanc
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Texte principal
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  ctx.font = "36px Arial, sans-serif";
+  ctx.fillText("Game Over !", canvas.width / 2, canvas.height / 2 - 35);
+
+  // Score
+  ctx.font = "24px Arial, sans-serif";
+  ctx.fillText(`Ton score : ${score}`, canvas.width / 2, canvas.height / 2 + 5);
+
+  // Instruction
+  ctx.font = "18px Arial, sans-serif";
+  ctx.fillText("Appuie sur F5 pour rejouer", canvas.width / 2, canvas.height / 2 + 40);
+}
+
+// Gestion du clavier
+document.addEventListener("keydown", (event) => {
+  handleDirectionInput(event, direction);
+});
+
+// Démarre le jeu
 startGame();

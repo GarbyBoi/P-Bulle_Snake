@@ -1,14 +1,44 @@
+let directionQueue = [];
+
 /**
- * Gère le changement de direction du serpent en fonction de l'entrée de l'utilisateur.
+ * Gère le changement de direction du serpent en fonction de l'entrée de l'utilisateur
+ * et maintient une file d'attente pour les mouvements rapides.
  *
- * Cette fonction est appelée chaque fois qu'une touche directionnelle est pressée.
- * Elle vérifie que la nouvelle direction n'est pas opposée à la direction actuelle
- * (pour éviter que le serpent se retourne sur lui-même) et retourne la nouvelle direction
- * si elle est valide.
+ * @param {KeyboardEvent} event - L'événement clavier
+ * @param {string} currentDirection - Direction actuelle du serpent
+ */
+export function handleDirectionInput(event, currentDirection) {
+  const lastDirection = directionQueue.length > 0
+      ? directionQueue[directionQueue.length - 1]
+      : currentDirection;
+
+  const newDirection = handleDirectionChange(event, lastDirection);
+
+  if (newDirection !== lastDirection) {
+    directionQueue.push(newDirection);
+  }
+}
+
+/**
+ * Récupère et vide la prochaine direction dans la queue
+ * @param {string} currentDirection - Direction actuelle
+ * @returns {string} - Nouvelle direction du serpent
+ */
+export function getNextDirection(currentDirection) {
+  if (directionQueue.length > 0) {
+    return directionQueue.shift();
+  }
+  return currentDirection;
+}
+
+/**
+ * Vérifie et retourne la nouvelle direction selon les touches pressées
  *
- * @param {KeyboardEvent} event - L'événement clavier qui contient les informations sur la touche pressée.
- * @param {string} currentDirection - La direction actuelle du serpent (peut être "UP", "DOWN", "LEFT", ou "RIGHT").
- * @returns {string} - La nouvelle direction du serpent après traitement, ou la direction actuelle si le changement n'est pas valide.
+ * Cette fonction prévient le serpent de se retourner directement sur lui-même.
+ *
+ * @param {KeyboardEvent} event - L'événement clavier
+ * @param {string} currentDirection - La direction actuelle
+ * @returns {string} - La nouvelle direction si valide, sinon la direction actuelle
  */
 export function handleDirectionChange(event, currentDirection) {
   if (event.key === "ArrowLeft" && currentDirection !== "RIGHT") {
@@ -22,4 +52,3 @@ export function handleDirectionChange(event, currentDirection) {
   }
   return currentDirection; 
 }
-
