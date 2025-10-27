@@ -3,17 +3,19 @@ import { generateFood, drawFood } from "./food.js";
 import { handleDirectionInput, getNextDirection } from "./controls.js";
 import { checkCollision, checkWallCollision } from "./collision.js";
 import { drawScore } from "./score.js";
+import { startTimer, stopTimer, drawTimer } from "./timer.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const box = 20;
-const gameSpeed = 170;
+const gameSpeed = 110;
 let snake;
 let food;
 let direction = "RIGHT";
 let score = 0;
 let gameInterval;
+let totalTime = 0;
 
 /**
  * Initialise et démarre une nouvelle partie
@@ -23,7 +25,8 @@ function startGame() {
   food = generateFood(box, canvas);
   score = 0;
   direction = "RIGHT";
-
+  totalTime = 0;
+  startTimer();
   gameInterval = setInterval(draw, gameSpeed);
 }
 
@@ -57,6 +60,7 @@ function draw() {
   drawSnake(ctx, snake, box);
   drawFood(ctx, food, box);
   drawScore(ctx, score);
+  drawTimer(ctx, canvas);
 }
 
 /**
@@ -64,6 +68,7 @@ function draw() {
  */
 function endGame() {
   clearInterval(gameInterval);
+  totalTime = stopTimer();
 
   // Fond blanc
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -81,10 +86,11 @@ function endGame() {
   // Score
   ctx.font = "24px Arial, sans-serif";
   ctx.fillText(`Ton score : ${score}`, canvas.width / 2, canvas.height / 2 + 5);
+  ctx.fillText(`En: ${totalTime}s`, canvas.width / 2, canvas.height / 2 + 35);
 
   // Instruction
   ctx.font = "18px Arial, sans-serif";
-  ctx.fillText("Appuie sur F5 pour rejouer", canvas.width / 2, canvas.height / 2 + 40);
+  ctx.fillText("Appuie sur F5 pour rejouer", canvas.width / 2, canvas.height / 2 + 70);
 }
 
 // Gestion du clavier
