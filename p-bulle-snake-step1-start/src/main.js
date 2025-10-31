@@ -3,7 +3,7 @@ import { generateFood, drawFood } from "./food.js";
 import { handleDirectionInput, getNextDirection } from "./controls.js";
 import { checkCollision, checkWallCollision } from "./collision.js";
 import { drawScore } from "./score.js";
-import { startTimer, stopTimer, drawTimer } from "./timer.js";
+import { startTimer, stopTimer, drawTimer, pauseTimer, resumeTimer } from "./timer.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -16,6 +16,7 @@ let direction = "RIGHT";
 let score = 0;
 let gameInterval;
 let totalTime = 0;
+let paused = false;
 
 /**
  * Initialise et démarre une nouvelle partie
@@ -34,6 +35,7 @@ function startGame() {
  * Dessine et met à jour le jeu : mouvement du serpent, nourriture, collisions, rendu
  */
 function draw() {
+  if (paused) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Mise à jour de la direction via la queue
@@ -92,6 +94,46 @@ function endGame() {
   ctx.font = "18px Arial, sans-serif";
   ctx.fillText("Appuie sur F5 pour rejouer", canvas.width / 2, canvas.height / 2 + 70);
 }
+
+
+/**
+ * Bascule entre pause et reprise.
+ */
+function togglePause() {
+  if (!paused) {
+    paused = true;
+    clearInterval(gameInterval);
+    pauseTimer();
+    drawPauseOverlay();
+  } else {
+    paused = false;
+    resumeTimer();
+    gameInterval = setInterval(draw, gameSpeed);
+  }
+}
+
+/**
+ * Dessine un rectangle semi-transparent avec "Pause" au centre.
+ */
+function drawPauseOverlay() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "white";
+  ctx.font = "36px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Pause", canvas.width / 2, canvas.height / 2);
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    togglePause();
+  } else {
+    handleDirectionInput(event, direction);
+  }
+});
+
 
 // Gestion du clavier
 document.addEventListener("keydown", (event) => {
